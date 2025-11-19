@@ -247,47 +247,68 @@
   }
 
   async function loadCertificate() {
+    const badge = document.getElementById('status-badge');
+  
     try {
-      // Fetch data from blockchain
-      const data = await contract.getData(tokenID);
-
-      // Populate HTML
-      document.getElementById('name').textContent = data.receiverName;
-      document.getElementById('talk').textContent = data.talkTitle;
-      document.getElementById('org').textContent = data.organizationName;
-      
-      document.getElementById('date').textContent = data.eventDate;
-      
-      document.getElementById('issuer').textContent = data.issuerName;
-      document.getElementById('issuer-title').textContent = data.issuerTitle;
-
-      // Handle Signature Image
+      // First check if the token actually exists
+      // We use callStatic to simulate the call - it will revert if token doesn't exist
+      const data = await contract.callStatic.getData(tokenID);
+  
+      // If we reach here, the token exists and the call succeeded
+      // Populate HTML (same as before)
+      document.getElementById('name').textContent = data.receiverName || "—";
+      document.getElementById('talk').textContent = data.talkTitle || "—";
+      document.getElementById('org').textContent = data.organizationName || "—";
+      document.getElementById('date').textContent = data.eventDate || "—";
+      document.getElementById('issuer').textContent = data.issuerName || "—";
+      document.getElementById('issuer-title').textContent = data.issuerTitle || "—";
+  
+      // Signature image
       const sigImg = document.getElementById('sig-img');
       if (data.signatureUrl && data.signatureUrl.startsWith('http')) {
         sigImg.src = data.signatureUrl;
         sigImg.style.display = 'block';
       } else {
-        // Fallback if no signature URL provided
         sigImg.style.display = 'none';
       }
-
-      // Set Verification Link
+  
+      // Verification link
       const verifyUrl = `${EXPLORER}/token/${CONTRACT_ADDRESS}?a=${tokenID}`;
       const linkEl = document.getElementById('verify-url');
       linkEl.href = verifyUrl;
       linkEl.textContent = `Verified: Token #${tokenID} ↗`;
-
-      // Update Status Badge
-      const badge = document.getElementById('status-badge');
-      badge.textContent = "✓ Authenticated on Sepolia";
-      badge.style.background = "#15803d"; // Green
-
-    } catch (e) {
-      console.error(e);
-      const badge = document.getElementById('status-badge');
-      badge.textContent = "⚠ Connection Failed";
-      badge.style.background = "#b91c1c"; // Red
-      alert("Could not fetch certificate data. Check the Contract Address and Token ID.");
+  
+      // Success!
+      badge.textContent = "✓ Authenticated on Blockchain";
+      badge.style.background = "#15803d";
+  
+    } catch (error) {
+      console.error(error);
+  
+      // This catch now covers BOTH network errors AND non-existent tokens
+      badge.textContent = "✗ Invalid or Non-existent Token";
+      badge.style.background = "#b91c1c";
+  
+      // Optional: show more detailed message
+      let msg = "This certificate does not exist or has been revoked.";
+      if (error.message.includes("nonexistent token") || error.reason?.includes("nonexistent token")) {
+        msg = "Token ID does not exist.";
+      } else if (error.code === "CALL_EXCEPTION") {
+        msg = "Invalid Token ID or certificate not issued.";
+      }
+  
+      // Show empty/fallback certificate instead of breaking layout
+      document.getElementById('name').textContent = "Invalid Token";
+      document.getElementById('talk').textContent = "—";
+      document.getElementById('org').textContent = "—";
+      document.getElementById('date').textContent = "—";
+      document.getElementById('issuer').textContent = "—";
+      document.getElementById('issuer-title').textContent = "—";
+      document.getElementById('sig-img').style.display = 'none';
+      document.getElementById('verify-url').textContent = "Invalid Token";
+      document.getElementById('verify-url').removeAttribute('href');
+  
+      alert(msg);
     }
   }
 
