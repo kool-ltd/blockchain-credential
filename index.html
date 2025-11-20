@@ -6,6 +6,28 @@
   <meta name="viewport" content="width=900, user-scalable=yes">
   <title>Certificate of Participation</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script>
+  // After you successfully load the certificate data:
+  function updateVerification(tokenID) {
+    const explorerUrl = `https://sepolia.etherscan.io/token/${CONTRACT_ADDRESS}?a=${tokenID}`;
+    
+    // Update the text link
+    document.getElementById('verify-url').href = explorerUrl;
+    document.getElementById('verify-url').textContent = `Verified: Token #${tokenID}`;
+    document.getElementById('token-number').textContent = tokenID;
+  
+    // Generate QR code
+    QRCode.toCanvas(document.getElementById('qr-code'), explorerUrl, {
+      width: 90,
+      margin: 1,
+      color: { dark: '#000', light: '#fff' }
+    }, (error) => { if (error) console.error(error); });
+  }
+  
+  // Call it inside your success block:
+  updateVerification(tokenID);
+  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap');
 
@@ -111,20 +133,53 @@
 
     /* Left Side Footer */
     .footer-left {
-      text-align: left;
+      text-align: center;
+      width: 45%;
     }
-    .date-text { font-size: 18px; color: #333; margin-bottom: 5px; }
-    .verify-link {
-      font-size: 12px;
-      color: #666;
-      text-decoration: none;
-      border: 1px solid #ccc;
-      padding: 5px 10px;
-      border-radius: 4px;
-      background: #f9f9f9;
-      transition: all 0.3s;
+    
+    .verify-section {
+      margin-bottom: 16px;
     }
-    .verify-link:hover { background: #e0e0e0; color: #000; border-color: #999; }
+    
+    .verify-text {
+      font-size: 14px;
+      color: #2563eb;
+      text-decoration: underline;
+      font-weight: 500;
+      font-family: 'Lato', sans-serif;
+    }
+    
+    .verify-hint {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #555;
+      font-family: 'Lato', sans-serif;
+      line-height: 1.4;
+    }
+    
+    .qr-container {
+      margin: 14px 0;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .qr-code {
+      width: 92px;
+      height: 92px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 4px;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    
+    .date-text {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #333;
+      font-family: 'Lato', sans-serif;
+      font-weight: 400;
+    }
 
     /* Right Side Footer */
     .footer-right {
@@ -185,11 +240,24 @@
     <div class="footer">
       <!-- Left: Date & Verification -->
       <div class="footer-left">
-        <div class="date-text" id="date">...</div>
-        <a href="#" id="verify-url" target="_blank" class="verify-link">
-          Verify on Sepolia Etherscan ↗
+      <!-- Verification Link + Instruction -->
+      <div class="verify-section">
+        <a href="#" id="verify-url" target="_blank" class="verify-text">
+          Verified: Token #<span id="token-number"></span>
         </a>
+        <div class="verify-hint">
+          Scan QR code or click link to verify on blockchain
+        </div>
       </div>
+    
+      <!-- QR Code -->
+      <div class="qr-container">
+        <img id="qr-code" src="" alt="Verify on Etherscan" class="qr-code">
+      </div>
+    
+      <!-- Date at the very bottom -->
+      <div class="date-text" id="date"></div>
+    </div>
 
       <!-- Right: Signature & Issuer -->
       <div class="footer-right">
