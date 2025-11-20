@@ -240,29 +240,30 @@
   const tokenID = params.get('tokenID');
   const urlName = params.get('name')?.trim().toLowerCase();  
 
-  if (!tokenID) {
-    document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px;'>No Token ID provided.</h2>";
-    throw "No Token ID";
+  if (!tokenID || !urlName) {
+    document.body.innerHTML = "<h2 style='text-align:center;margin-top:100px;color:#b91c1c;'>Invalid or incomplete certificate link</h2>";
+    throw "Missing parameters";
   }
 
   async function loadCertificate() {
     const badge = document.getElementById('status-badge');
-    badge.textContent = "Checking token...";
+    badge.textContent = "Verifying link...";
     badge.style.background = "#ca8a04";
 
     try {
       const data = await contract.callStatic.getData(tokenID);
 
-      if (urlName) {
-        const onChainName = data.receiverName.trim().toLowerCase();
-        if (urlName !== onChainName && urlName !== onChainName.replace(/\s+/g, '')) {
-          throw new Error("Invalid certificate link");
-        }
+      // Empty/invalid token handling
+      if (!data.receiverName || data.receiverName.trim() === "") {
+        throw new Error("Token does not exist");
       }
 
-      if (!data.receiverName || data.receiverName.trim() === "" ||
-          !data.talkTitle || data.talkTitle.trim() === "") {
-        throw new Error("Empty certificate data");
+      // ←←← STRICT NAME MATCH (case-insensitive + whitespace tolerant)
+      const cleanUrlName = urlName.trim().toLowerCase();
+      const cleanChainName = data.receiverName.trim().toLowerCase();
+
+      if (cleanUrlName !== cleanChainName && cleanUrlName !== cleanChainName.replace(/\s+/g,'')) {
+        throw new Error("Name in URL does not match certificate holder");
       }
 
       document.getElementById('name').textContent = data.receiverName;
@@ -287,10 +288,10 @@
 
     } catch (error) {
       console.error(error);
-      badge.textContent = "✗ Invalid or Non-existent Token";
+      badge.textContent = "Invalid Certificate Link";
       badge.style.background = "#b91c1c";
 
-      document.getElementById('name').textContent = "Invalid Token ID";
+      document.getElementById('name').textContent = "Access Denied";
       document.getElementById('talk').textContent = "—";
       document.getElementById('org').textContent = "—";
       document.getElementById('date').textContent = "—";
