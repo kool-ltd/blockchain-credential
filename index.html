@@ -2,70 +2,199 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- MODIFIED VIEWPORT: Forces the browser to render at 900px width, scaling it down to fit mobile screens -->
   <meta name="viewport" content="width=900, user-scalable=yes">
   <title>Certificate of Participation</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap');
-    body {margin:0;padding:0;background:#f0f2f5;font-family:'Cinzel',serif;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow-x:auto;}
-    #cert-container {position:relative;width:900px;height:600px;background:#fff url('./images/ai-talk-credential-template.png') center/cover no-repeat;box-shadow:0 15px 35px rgba(0,0,0,0.15);overflow:hidden;flex-shrink:0;}
-    .content {position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;text-align:center;}
-    .header-text {margin-top:160px;font-size:42px;font-weight:700;color:#2c3e50;text-transform:uppercase;letter-spacing:2px;}
-    .sub-header {margin-top:10px;font-family:'Lato',sans-serif;font-size:18px;color:#555;font-style:italic;}
-    #logo img {width:90px;position:relative;top:50px;}
-    .receiver-name {margin-top:30px;font-size:52px;font-weight:700;color:#d48a4e;border-bottom:1px solid #ddd;padding-bottom:10px;min-width:400px;}
-    .context-text {margin-top:20px;font-family:'Lato',sans-serif;font-size:20px;color:#444;max-width:700px;line-height:1.5;}
-    .bold {font-weight:bold;color:#000;}
-    .footer {position:absolute;bottom:60px;width:80%;display:flex;justify-content:space-between;align-items:flex-end;font-family:'Lato',sans-serif;}
-    .footer-left {text-align:center;width:45%;}
-    .verify-text {font-size:14px;color:#2563eb;text-decoration:underline;font-weight:500;}
-    .verify-hint {margin-top:6px;font-size:11px;color:#555;line-height:1.4;}
-    .qr-container {margin:14px 0;display:flex;justify-content:center;}
-    .qr-code {width:92px;height:92px;border:1px solid #e0e0e0;border-radius:8px;padding:4px;background:white;box-shadow:0 2px 6px rgba(0,0,0,0.08);}
-    .date-text {margin-top:20px;font-size:16px;color:#333;}
-    .footer-right {text-align:center;display:flex;flex-direction:column;align-items:center;}
-    .signature-img {height:60px;margin-bottom:5px;display:none;}
-    .issuer-line {width:200px;border-top:1px solid #333;margin-bottom:5px;}
-    .issuer-name {font-weight:bold;font-size:18px;}
-    .issuer-title {font-size:14px;color:#555;}
-    #status-badge {position:absolute;top:20px;right:20px;background:#eab308;color:white;padding:8px 16px;border-radius:20px;font-family:'Lato',sans-serif;font-size:12px;font-weight:bold;box-shadow:0 2px 5px rgba(0,0,0,0.2);}
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f0f2f5;
+      font-family: 'Cinzel', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      /* Ensure horizontal scroll doesn't appear unnecessarily */
+      overflow-x: auto; 
+    }
+
+    /* The Certificate Container - Fixed Width */
+    #cert-container {
+      position: relative;
+      width: 900px;  /* Fixed width */
+      height: 600px; /* Fixed height */
+      background: #fff;
+      background-image: url('./images/ai-talk-credential-template.png');
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      color: #333;
+      overflow: hidden;
+      /* Ensure it doesn't shrink */
+      flex-shrink: 0; 
+    }
+
+    /* Content Layout */
+    .content {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Header Section */
+    .header-text {
+      margin-top: 160px;
+      font-size: 42px;
+      font-weight: 700;
+      color: #2c3e50;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .sub-header {
+      margin-top: 10px;
+      font-family: 'Lato', sans-serif;
+      font-size: 18px;
+      color: #555;
+      font-style: italic;
+    }
+
+    div#logo {
+      text-align: center;
+    }
+
+    #logo img{
+      width: 90px;
+      position: relative;
+      top: 50px;
+    }
+
+    /* Receiver Name */
+    .receiver-name {
+      margin-top: 30px;
+      font-size: 52px;
+      font-weight: 700;
+      color: #d48a4e;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      min-width: 400px;
+    }
+
+    /* Context Text */
+    .context-text {
+      margin-top: 20px;
+      font-family: 'Lato', sans-serif;
+      font-size: 20px;
+      color: #444;
+      max-width: 700px;
+      line-height: 1.5;
+    }
+    .bold { font-weight: bold; color: #000; }
+
+    /* Footer Section */
+    .footer {
+      position: absolute;
+      bottom: 60px;
+      width: 80%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-family: 'Lato', sans-serif;
+    }
+
+    /* Left Side Footer */
+    .footer-left {
+      text-align: left;
+    }
+    .date-text { font-size: 18px; color: #333; margin-bottom: 5px; }
+    .verify-link {
+      font-size: 12px;
+      color: #666;
+      text-decoration: none;
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+      border-radius: 4px;
+      background: #f9f9f9;
+      transition: all 0.3s;
+    }
+    .verify-link:hover { background: #e0e0e0; color: #000; border-color: #999; }
+
+    /* Right Side Footer */
+    .footer-right {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .signature-img {
+      height: 60px;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .issuer-line {
+      width: 200px;
+      border-top: 1px solid #333;
+      margin-bottom: 5px;
+    }
+    .issuer-name { font-weight: bold; font-size: 18px; }
+    .issuer-title { font-size: 14px; color: #555; }
+
+    /* Status Badge */
+    #status-badge {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: #eab308;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
 
 <div id="cert-container">
   <div id="status-badge">Connecting to Blockchain...</div>
-  <div id="logo"><img src="./images/logo.webp" alt="Logo"></div>
+  <div id="logo"><img src="./images/logo.webp"></div>
 
   <div class="content">
+    <!-- Header -->
     <div class="header-text">Certificate of Participation</div>
     <div class="sub-header">This certifies that</div>
+
+    <!-- Name -->
     <div class="receiver-name" id="name">Loading...</div>
+
+    <!-- Context -->
     <div class="context-text">
       has participated in <span class="bold" id="talk">...</span><br>
       organized by <span class="bold" id="org">...</span>
     </div>
 
+    <!-- Footer -->
     <div class="footer">
-      <!-- LEFT: Verification + QR + Date -->
+      <!-- Left: Date & Verification -->
       <div class="footer-left">
-        <div class="verify-section">
-          <a href="#" id="verify-url" target="_blank" class="verify-text">
-            Verified: Token #<span id="token-number"></span>
-          </a>
-          <div class="verify-hint">Scan QR code or click link to verify on blockchain</div>
-        </div>
-        <div class="qr-container">
-          <img id="qr-code" alt="QR Code" class="qr-code">
-        </div>
-        <div class="date-text" id="date"></div>
+        <div class="date-text" id="date">...</div>
+        <a href="#" id="verify-url" target="_blank" class="verify-link">
+          Verify on Sepolia Etherscan ↗
+        </a>
       </div>
 
-      <!-- RIGHT: Signature -->
+      <!-- Right: Signature & Issuer -->
       <div class="footer-right">
-        <img id="sig-img" alt="Signature" class="signature-img">
+        <!-- Signature Image loaded from chain -->
+        <img id="sig-img" src="" alt="Signature" class="signature-img" style="display:none;"> 
         <div class="issuer-line"></div>
         <div class="issuer-name" id="issuer">...</div>
         <div class="issuer-title" id="issuer-title">...</div>
@@ -75,68 +204,68 @@
 </div>
 
 <script>
-  // ───── CONFIGURATION (only declared once!) ─────
-  const CONTRACT_ADDRESS = "0x015A4c436aAcB0D6af25f3D649952649C48b372c";
+  // --- CONFIGURATION ---
+  const CONTRACT_ADDRESS = "0x015A4c436aAcB0D6af25f3D649952649C48b372c"; 
   const RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
-  const EXPLORER_BASE = "https://sepolia.etherscan.io/token/" + CONTRACT_ADDRESS + "?a=";
+  const EXPLORER = "https://sepolia.etherscan.io";
+
+  const abi = [
+    {
+      "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
+      "name": "getData",
+      "outputs": [{
+        "components": [
+          { "internalType": "string", "name": "receiverName", "type": "string" },
+          { "internalType": "string", "name": "talkTitle", "type": "string" },
+          { "internalType": "string", "name": "organizationName", "type": "string" },
+          { "internalType": "string", "name": "eventDate", "type": "string" },
+          { "internalType": "string", "name": "issuerName", "type": "string" },
+          { "internalType": "string", "name": "issuerTitle", "type": "string" },
+          { "internalType": "string", "name": "signatureUrl", "type": "string" },
+          { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+        ],
+        "internalType": "struct AICredential.CredentialData",
+        "name": "",
+        "type": "tuple"
+      }],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
 
   const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
-  const contract = new ethers.Contract(CONTRACT_ADDRESS, [
-    { "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
-      "name": "getData",
-      "outputs": [{ "components": [
-        { "internalType": "string", "name": "receiverName", "type": "string" },
-        { "internalType": "string", "name": "talkTitle", "type": "string" },
-        { "internalType": "string", "name": "organizationName", "type": "string" },
-        { "internalType": "string", "name": "eventDate", "type": "string" },
-        { "internalType": "string", "name": "issuerName", "type": "string" },
-        { "internalType": "string", "name": "issuerTitle", "type": "string" },
-        { "internalType": "string", "name": "signatureUrl", "type": "string" },
-        { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-      ], "internalType": "struct AICredential.CredentialData", "name": "", "type": "tuple" }],
-      "stateMutability": "view", "type": "function" }
-  ], provider);
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
 
   const params = new URLSearchParams(location.search);
   const tokenID = params.get('tokenID');
-  const urlName = params.get('name')?.trim().toLowerCase();
+  const urlName = params.get('name')?.trim().toLowerCase();  
 
-  // Strict check — no tokenID or name → immediately reject
   if (!tokenID || !urlName) {
     document.body.innerHTML = "<h2 style='text-align:center;margin-top:100px;color:#b91c1c;'>Invalid or incomplete certificate link</h2>";
     throw "Missing parameters";
   }
 
-  // ───── Render QR + verification link ─────
-  function renderVerificationFooter(id) {
-    const url = EXPLORER_BASE + id;
-    document.getElementById('token-number').textContent = id;
-    document.getElementById('verify-url').href = url;
-
-    QRCode.toDataURL(url, { width: 128, margin: 2, color: { dark: "#000", light: "#FFF" } }, (err, dataUrl) => {
-      if (!err) document.getElementById('qr-code').src = dataUrl;
-    });
-  }
-
-  // ───── Main loading function ─────
   async function loadCertificate() {
     const badge = document.getElementById('status-badge');
-    badge.textContent = "Verifying...";
+    badge.textContent = "Verifying link...";
     badge.style.background = "#ca8a04";
 
     try {
-      const data = await contract.getData(tokenID);
+      const data = await contract.callStatic.getData(tokenID);
 
-      if (!data.receiverName?.trim()) throw new Error("Empty data");
-
-      // Name check (case + space tolerant)
-      const chainName = data.receiverName.trim().toLowerCase();
-      const cleanUrlName = urlName.replace(/\s+/g, '');
-      if (chainName !== urlName && chainName !== cleanUrlName) {
-        throw new Error("Name mismatch");
+      // Empty/invalid token handling
+      if (!data.receiverName || data.receiverName.trim() === "") {
+        throw new Error("Token does not exist");
       }
 
-      // Populate fields
+      // ←←← STRICT NAME MATCH (case-insensitive + whitespace tolerant)
+      const cleanUrlName = urlName.trim().toLowerCase();
+      const cleanChainName = data.receiverName.trim().toLowerCase();
+
+      if (cleanUrlName !== cleanChainName && cleanUrlName !== cleanChainName.replace(/\s+/g,'')) {
+        throw new Error("Name in URL does not match certificate holder");
+      }
+
       document.getElementById('name').textContent = data.receiverName;
       document.getElementById('talk').textContent = data.talkTitle;
       document.getElementById('org').textContent = data.organizationName;
@@ -144,23 +273,33 @@
       document.getElementById('issuer').textContent = data.issuerName;
       document.getElementById('issuer-title').textContent = data.issuerTitle;
 
-      if (data.signatureUrl?.startsWith('http')) {
-        document.getElementById('sig-img').src = data.signatureUrl;
-        document.getElementById('sig-img').style.display = 'block';
+      const sigImg = document.getElementById('sig-img');
+      if (data.signatureUrl && data.signatureUrl.startsWith('http')) {
+        sigImg.src = data.signatureUrl;
+        sigImg.style.display = 'block';
       }
 
-      renderVerificationFooter(tokenID);
+      const verifyUrl = `${EXPLORER}/token/${CONTRACT_ADDRESS}?a=${tokenID}`;
+      document.getElementById('verify-url').href = verifyUrl;
+      document.getElementById('verify-url').textContent = `Verified: Token #${tokenID} ↗`;
 
-      badge.textContent = "Authenticated on Blockchain";
+      badge.textContent = "✓ Authenticated on Blockchain";
       badge.style.background = "#15803d";
 
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       badge.textContent = "Invalid Certificate Link";
       badge.style.background = "#b91c1c";
+
       document.getElementById('name').textContent = "Access Denied";
-      ["talk","org","date","issuer","issuer-title"].forEach(id => document.getElementById(id).textContent = "—");
+      document.getElementById('talk').textContent = "—";
+      document.getElementById('org').textContent = "—";
+      document.getElementById('date').textContent = "—";
+      document.getElementById('issuer').textContent = "—";
+      document.getElementById('issuer-title').textContent = "—";
       document.getElementById('sig-img').style.display = 'none';
+      document.getElementById('verify-url').textContent = "No verification available";
+      document.getElementById('verify-url').removeAttribute('href');
     }
   }
 
