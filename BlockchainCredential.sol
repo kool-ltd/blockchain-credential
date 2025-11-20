@@ -76,4 +76,12 @@ contract AICredential is ERC1155, Ownable {
 
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(bytes(json))));
     }
+
+    function name() public pure returns (string memory) {
+        return "Blockchain Credentials";
+    }
+    
+    function symbol() public pure returns (string memory) {
+        return "BCCDT";
+    }
 }
