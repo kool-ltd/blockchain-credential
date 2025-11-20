@@ -268,7 +268,7 @@
         sigImg.src = data.signatureUrl;
         sigImg.style.display = 'block';
       }
-      const verifyUrl = `${EXPLORER}/token/${CONTRACT_ADDRESS}/token-instance/${tokenID}`;
+      const verifyUrl = `${EXPLORER}/token/${CONTRACT_ADDRESS}/instance/${tokenID}`;
       document.getElementById('verify-url').href = verifyUrl;
       document.getElementById('token-id').textContent = tokenID;
       badge.textContent = "✓ Authenticated on Blockchain";
