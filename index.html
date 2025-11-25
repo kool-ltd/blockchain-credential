@@ -7,18 +7,19 @@
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;800&family=Lato:wght@300;400;700&display=swap');
-    
+
     body {
       margin: 0;
       padding: 0;
-      background: #f0f2f5;
-      font-family: 'Cinzel', serif;
+      background: #f9f7fc;
+      font-family: 'Lato', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       overflow-x: auto;
     }
+
     #cert-container {
       position: relative;
       width: 900px;
@@ -27,136 +28,200 @@
       background-image: url('./images/credential-template.png');
       background-size: cover;
       background-position: center;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-      color: #333;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
       overflow: hidden;
       flex-shrink: 0;
+      border-radius: 12px;
     }
-    .content {
+
+    .content-wrapper {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
+      padding-left: 100px;
+      padding-top: 80px;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
     }
 
-    div#logo { text-align:center; }
-    #logo img { width: 90px; position: relative; top: 50px; }
+    #logo img {
+      width: 110px;
+      margin-bottom: 20px;
+    }
 
-    /* Smaller & denser main title */
     .header-text {
-      margin-top: 140px;
-      font-size: 32px;
+      font-family: 'Cinzel', serif;
+      font-size: 36px;
       font-weight: 800;
       color: #2c3e50;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
+      margin: 0 0 8px 0;
+      line-height: 1.1;
     }
+
     .sub-header {
-      margin-top: 10px;
-      font-family: 'Lato', sans-serif;
-      font-size: 18px;
+      font-size: 19px;
       color: #555;
       font-style: italic;
-    }
-    .receiver-name {
-      margin-top: 20px;
-      font-size: 52px;
-      font-weight: 700;
-      color: #d48a4e;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
-      min-width: 400px;
+      margin: 0 0 35px 0;
     }
 
-    /* New layout for the main text */
+    .receiver-name {
+      font-family: 'Cinzel', serif;
+      font-size: 58px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #d48a4e, #f4c287);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 20px 0 30px 0;
+      line-height: 1.1;
+      max-width: 700px;
+    }
+
     .participated-line {
-      margin: 20px 0 0px;
-      font-family: 'Lato', sans-serif;
-      font-size: 20px;
+      font-size: 21px;
       color: #444;
       font-style: italic;
+      margin: 10px 0;
     }
+
     .talk-title {
-      margin: 10px 0 0px;
       font-family: 'Cinzel', serif;
-      font-size: 40px;
+      font-size: 44px;
       font-weight: 700;
       color: #2c3e50;
+      margin: 15px 0 20px 0;
       line-height: 1.2;
+      max-width: 720px;
     }
+
     .organized-by {
-      font-family: 'Lato', sans-serif;
       font-size: 19px;
       color: #444;
+      margin: 8px 0 30px 0;
     }
+
     .bold { font-weight: bold; color: #000; }
 
-    /* Remarks section */
     .remarks {
-      margin-top: 28px;
-      font-family: 'Lato', sans-serif;
-      font-size: 14px;
+      font-size: 16px;
       font-style: italic;
-      color: #666;
+      color: #5a5a5a;
+      background: rgba(212, 138, 78, 0.08);
+      padding: 16px 22px;
+      border-left: 4px solid #d48a4e;
       max-width: 680px;
-      line-height: 1.5;
-      padding: 12px 20px;
-      background: rgba(212, 138, 78, 0.05);
-      border-left: 3px solid #d48a4e;
-      display: none; /* shown only if remarks exist */
+      margin: 30px 0;
+      border-radius: 0 8px 8px 0;
+      display: none;
     }
 
-    /* Footer */
+    /* Footer - Left & Right */
     .footer {
       position: absolute;
-      bottom: 30px;
-      width: 80%;
+      bottom: 40px;
+      left: 100px;
+      right: 80px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       font-family: 'Lato', sans-serif;
     }
-    .footer-left { text-align: left; line-height: 1.5; }
-    .verify-title { font-weight: 600; color: #2c3e50; font-size: 14px; margin-bottom: 6px; }
-    .verify-link {
-      font-size: 11.5px; color: #666; text-decoration: none;
-      border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px;
-      background: #f9f9f9; transition: all 0.3s; display: inline-block;
-    }
-    .verify-link:hover { background: #e0e0e0; color: #000; border-color: #999; }
-    .cert-url-text { font-size: 11px; color: #555; margin-top: 6px; word-break: break-all; }
-    #token-id { font-family: monospace; letter-spacing: 0.5px; color: #2563eb; }
 
-    .footer-right { text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .signature-img { height: 60px; margin-bottom: 5px; display: block; }
-    .issuer-line { width: 200px; border-top: 1px solid #333; margin-bottom: 5px; }
-    .issuer-name { font-weight: bold; font-size: 18px; }
-    .issuer-title { font-size: 14px; color: #555; }
+    .footer-left {
+      line-height: 1.6;
+    }
+
+    .verify-title {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .verify-link {
+      font-size: 11.5px;
+      color: #2563eb;
+      text-decoration: none;
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: #f8f9fa;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+
+    .verify-link:hover {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
+    .cert-url-text {
+      font-size: 11px;
+      color: #666;
+      margin-top: 8px;
+      word-break: break-all;
+    }
+
+    #token-id {
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    .footer-right {
+      text-align: center;
+    }
+
+    .signature-img {
+      height: 65px;
+      margin-bottom: 8px;
+      filter: grayscale(0%) contrast(1.2);
+    }
+
+    .issuer-line {
+      width: 220px;
+      border-top: 2px solid #333;
+      margin: 8px 0;
+    }
+
+    .issuer-name {
+      font-weight: bold;
+      font-size: 19px;
+      color: #2c3e50;
+    }
+
+    .issuer-title {
+      font-size: 14px;
+      color: #666;
+    }
 
     #status-badge {
       position: absolute;
       top: 20px; right: 20px;
       background: #eab308;
       color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-family: 'Lato', sans-serif;
+      padding: 8px 18px;
+      border-radius: 30px;
       font-size: 12px;
       font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      z-index: 10;
     }
   </style>
 </head>
 <body>
+
 <div id="cert-container">
   <div id="status-badge">Connecting to Blockchain...</div>
-  <div id="logo"><img src="./images/logo.webp" alt="Logo"></div>
 
-  <div class="content">
-    <div class="header-text">Certificate of Participation</div>
-    <div class="sub-header">This certifies that</div>
+  <div class="content-wrapper">
+    <div id="logo"><img src="./images/logo.webp" alt="Logo"></div>
+
+    <div class="header-text" id="header-text">Certificate of Participation</div>
+    <div class="sub-header">This is to certify that</div>
 
     <div class="receiver-name" id="name">Loading...</div>
 
@@ -167,19 +232,20 @@
       organized by <span class="bold" id="org">...</span> on <span class="bold" id="date">...</span>
     </div>
 
-    <!-- Remarks from blockchain -->
     <div class="remarks" id="remarks"></div>
 
     <div class="footer">
       <div class="footer-left">
         <div class="verify-title">Verify this certificate on blockchain</div>
         <a href="#" id="verify-url" target="_blank" class="verify-link">
-          Contract ID: <span id="token-id">...</span> ↗
+          Contract ID: <span id="token-id">...</span>
         </a>
         <div class="cert-url-text">
-          View digital certificate: <br><span id="current-url">https://...</span>
+          View digital certificate:<br>
+          <span id="current-url">https://...</span>
         </div>
       </div>
+
       <div class="footer-right">
         <img id="sig-img" src="" alt="Signature" class="signature-img" style="display:none;">
         <div class="issuer-line"></div>
@@ -195,30 +261,28 @@
   const RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
   const EXPLORER = "https://eth-sepolia.blockscout.com";
 
-  const abi = [
-    {
-      "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
-      "name": "getData",
-      "outputs": [{
-        "components": [
-          { "internalType": "string", "name": "receiverName", "type": "string" },
-          { "internalType": "string", "name": "talkTitle", "type": "string" },
-          { "internalType": "string", "name": "organizationName", "type": "string" },
-          { "internalType": "string", "name": "eventDate", "type": "string" },
-          { "internalType": "string", "name": "issuerName", "type": "string" },
-          { "internalType": "string", "name": "issuerTitle", "type": "string" },
-          { "internalType": "string", "name": "signatureUrl", "type": "string" },
-          { "internalType": "string", "name": "remarks", "type": "string" },
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-        ],
-        "internalType": "struct AICredential.CredentialData",
-        "name": "",
-        "type": "tuple"
-      }],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ];
+  const abi = [ /* your ABI - unchanged */ {
+    "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
+    "name": "getData",
+    "outputs": [{
+      "components": [
+        { "internalType": "string", "name": "receiverName", "type": "string" },
+        { "internalType": "string", "name": "talkTitle", "type": "string" },
+        { "internalType": "string", "name": "organizationName", "type": "string" },
+        { "internalType": "string", "name": "eventDate", "type": "string" },
+        { "internalType": "string", "name": "issuerName", "type": "string" },
+        { "internalType": "string", "name": "issuerTitle", "type": "string" },
+        { "internalType": "string", "name": "signatureUrl", "type": "string" },
+        { "internalType": "string", "name": "remarks", "type": "string" },
+        { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+      ],
+      "internalType": "struct AICredential.CredentialData",
+      "name": "",
+      "type": "tuple"
+    }],
+    "stateMutability": "view",
+    "type": "function"
+  }];
 
   const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
@@ -233,23 +297,20 @@
 
   async function loadCertificate() {
     const badge = document.getElementById('status-badge');
-    badge.textContent = "Verifying link...";
+    badge.textContent = "Verifying...";
     badge.style.background = "#ca8a04";
 
     try {
       const data = await contract.callStatic.getData(tokenID);
 
-      if (!data.receiverName || data.receiverName.trim() === "") {
-        throw new Error("Token does not exist");
-      }
+      if (!data.receiverName || data.receiverName.trim() === "") throw new Error("Invalid token");
 
       const cleanUrlName = urlName.trim().toLowerCase();
       const cleanChainName = data.receiverName.trim().toLowerCase();
       if (cleanUrlName !== cleanChainName && cleanUrlName !== cleanChainName.replace(/\s+/g,'')) {
-        throw new Error("Name in URL does not match certificate holder");
+        throw new Error("Name mismatch");
       }
 
-      // Populate fields
       document.getElementById('name').textContent = data.receiverName;
       document.getElementById('talk').textContent = data.talkTitle;
       document.getElementById('org').textContent = data.organizationName;
@@ -257,43 +318,37 @@
       document.getElementById('issuer').textContent = data.issuerName;
       document.getElementById('issuer-title').textContent = data.issuerTitle;
 
-      // Signature
-      const sigImg = document.getElementById('sig-img');
       if (data.signatureUrl && data.signatureUrl.startsWith('http')) {
-        sigImg.src = data.signatureUrl;
-        sigImg.style.display = 'block';
+        document.getElementById('sig-img').src = data.signatureUrl;
+        document.getElementById('sig-img').style.display = 'block';
       }
 
-      // Remarks
       const remarksEl = document.getElementById('remarks');
-      if (data.remarks && data.remarks.trim() !== "") {
+      if (data.remarks && data.remarks.trim()) {
         remarksEl.textContent = data.remarks.trim();
-        remarksEl.style.display = 'none';
+        remarksEl.style.display = 'block';
       }
 
-      // Verification link
       const verifyUrl = `${EXPLORER}/token/${CONTRACT_ADDRESS}/instance/${tokenID}`;
       document.getElementById('verify-url').href = verifyUrl;
       document.getElementById('token-id').textContent = tokenID;
-      document.getElementById("current-url").textContent = window.location.href;
+      document.getElementById('current-url').textContent = window.location.href;
 
       badge.textContent = "Authenticated on Blockchain";
       badge.style.background = "#15803d";
-    } catch (error) {
-      console.error(error);
-      badge.textContent = "Invalid Certificate Link";
+    } catch (err) {
+      console.error(err);
+      badge.textContent = "Invalid Certificate";
       badge.style.background = "#b91c1c";
       document.getElementById('name').textContent = "Access Denied";
-      document.getElementById('talk').textContent = "—";
-      document.getElementById('org').textContent = "—";
-      document.getElementById('date').textContent = "—";
-      document.getElementById('issuer').textContent = "—";
-      document.getElementById('issuer-title').textContent = "—";
+      ["talk","org","date","issuer","issuer-title"].forEach(id => {
+        document.getElementById(id).textContent = "—";
+      });
       document.getElementById('sig-img').style.display = 'none';
-      document.getElementById('verify-url').textContent = "No verification available";
       document.getElementById('verify-url').removeAttribute('href');
+      document.getElementById('verify-url').textContent = "Verification unavailable";
       document.getElementById('token-id').textContent = "—";
-      document.getElementById("current-url").textContent = "—";
+      document.getElementById('current-url').textContent = "—";
     }
   }
 
