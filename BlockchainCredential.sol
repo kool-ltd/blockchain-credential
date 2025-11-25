@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol"; // Available in OpenZeppelin 4.5+
 
-contract BlockchainCredential is ERC1155, Ownable {
+contract KoolCredentials is ERC1155, Ownable {
     using Strings for uint256;
 
     struct CredentialData {
@@ -17,6 +17,7 @@ contract BlockchainCredential is ERC1155, Ownable {
         string issuerName;
         string issuerTitle;      // New
         string signatureUrl;     // New
+        string remarks;
         uint256 timestamp;
     }
 
@@ -26,12 +27,12 @@ contract BlockchainCredential is ERC1155, Ownable {
     constructor() ERC1155("") Ownable(msg.sender) {}
 
     function name() public pure returns (string memory) {
-        return "Blockchain Credentials";
+        return "Kool Credentials";
     }
 
-    function symbol() public pure returns (string memory) {
-        return "BCCD";
-    }
+    // function symbol() public pure returns (string memory) {
+    //     return "BCCD";
+    // }
 
     function mint(
         address to,
@@ -42,7 +43,8 @@ contract BlockchainCredential is ERC1155, Ownable {
         string memory eventDate,
         string memory issuerName,
         string memory issuerTitle,
-        string memory signatureUrl
+        string memory signatureUrl,
+        string memory remarks
     ) public onlyOwner {
         tokenData[id] = CredentialData({
             receiverName: receiverName,
@@ -52,6 +54,7 @@ contract BlockchainCredential is ERC1155, Ownable {
             issuerName: issuerName,
             issuerTitle: issuerTitle,
             signatureUrl: signatureUrl,
+            remarks: remarks,
             timestamp: block.timestamp
         });
         _mint(to, id, 1, "");
