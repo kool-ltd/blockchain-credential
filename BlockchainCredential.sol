@@ -26,12 +26,12 @@ contract BlockchainCredential is ERC1155, Ownable {
     constructor() ERC1155("") Ownable(msg.sender) {}
 
     function name() public pure returns (string memory) {
-        return "Blockchain Credentials";
+        return "Kool Credentials";
     }
 
-    function symbol() public pure returns (string memory) {
-        return "BCCD";
-    }
+    // function symbol() public pure returns (string memory) {
+    //     return "BCCD";
+    // }
 
     function mint(
         address to,
