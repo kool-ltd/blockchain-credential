@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- MODIFIED VIEWPORT: Forces the browser to render at 900px width, scaling it down to fit mobile screens -->
   <meta name="viewport" content="width=900, user-scalable=yes">
   <title>Certificate of Participation</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;800&family=Lato:wght@300;400;700&display=swap');
+    
     body {
       margin: 0;
       padding: 0;
@@ -17,14 +17,12 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      /* Ensure horizontal scroll doesn't appear unnecessarily */
       overflow-x: auto;
     }
-    /* The Certificate Container - Fixed Width */
     #cert-container {
       position: relative;
-      width: 900px; /* Fixed width */
-      height: 600px; /* Fixed height */
+      width: 900px;
+      height: 600px;
       background: #fff;
       background-image: url('./images/credential-template.png');
       background-size: cover;
@@ -32,10 +30,8 @@
       box-shadow: 0 15px 35px rgba(0,0,0,0.15);
       color: #333;
       overflow: hidden;
-      /* Ensure it doesn't shrink */
       flex-shrink: 0;
     }
-    /* Content Layout */
     .content {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -44,12 +40,16 @@
       align-items: center;
       text-align: center;
     }
-    /* Header Section */
+
+    div#logo { text-align:center; }
+    #logo img { width: 90px; position: relative; top: 60px; }
+
+    /* Smaller & denser main title */
     .header-text {
-      margin-top: 150px;
-      font-size: 42px;
-      font-weight: 700;
-      color: #2c3e50;
+      margin-top: 170px;
+      font-size: 25px;
+      font-weight: 800;
+      color: #4f6072;
       text-transform: uppercase;
       letter-spacing: 2px;
     }
@@ -57,101 +57,87 @@
       margin-top: 10px;
       font-family: 'Lato', sans-serif;
       font-size: 18px;
-      color: #555;
+      color: #4f6072;
       font-style: italic;
     }
-    div#logo {
-      text-align: center;
-    }
-    #logo img{
-      width: 90px;
-      position: relative;
-      top: 50px;
-    }
-    /* Receiver Name */
     .receiver-name {
-      margin-top: 30px;
-      font-size: 52px;
+      margin-top: 20px;
+      font-size: 55px;
       font-weight: 700;
-      color: #d48a4e;
+      background: linear-gradient(90deg, #d48a4e, #f4c287);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       border-bottom: 1px solid #ddd;
       padding-bottom: 10px;
       min-width: 400px;
     }
-    /* Context Text */
-    .context-text {
-      margin-top: 20px;
+
+    /* New layout for the main text */
+    .participated-line {
+      margin: 20px 0 0px;
       font-family: 'Lato', sans-serif;
       font-size: 20px;
-      color: #444;
-      max-width: 700px;
-      line-height: 1.5;
+      color: #4f6072;
+      font-style: italic;
     }
-    .bold { font-weight: bold; color: #000; }
-    /* Footer Section */
+    .talk-title {
+      margin: 10px 0;
+      font-family: 'Cinzel', serif;
+      font-size: 35px;
+      font-weight: 700;
+      color: #444;
+      line-height: 1.2;
+    }
+    .organized-by {
+      font-family: 'Lato', sans-serif;
+      font-size: 19px;
+      color: #444;
+    }
+    .bold { font-weight: bold; }
+
+    /* Remarks section */
+    .remarks {
+      margin-top: 28px;
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      font-style: italic;
+      color: #666;
+      max-width: 680px;
+      line-height: 1.5;
+      padding: 12px 20px;
+      background: rgba(212, 138, 78, 0.05);
+      border-left: 3px solid #4f6072;
+      display: none; /* shown only if remarks exist */
+    }
+
+    /* Footer */
     .footer {
       position: absolute;
       bottom: 30px;
-      width: 80%;
+      width: 90%;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       font-family: 'Lato', sans-serif;
     }
-    /* Left Side Footer */
-    .footer-left {
-      text-align: left;
-      line-height: 1.5;
-    }
-    .verify-title {
-      font-weight: 600;
-      color: #2c3e50;
-      font-size: 14px;
-      margin-bottom: 6px;
-    }
+    .footer-left { text-align: left; line-height: 1.5; }
+    .verify-title { font-weight: 600; color: #4f6072; font-size: 14px; margin-bottom: 6px; }
     .verify-link {
-      font-size: 11.5px;
-      color: #666;
-      text-decoration: none;
-      border: 1px solid #ccc;
-      padding: 4px 8px;
-      border-radius: 4px;
-      background: #f9f9f9;
-      transition: all 0.3s;
-      display: inline-block;
+      font-size: 11.5px; color: #4f6072; text-decoration: none;
+      border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px;
+      background: #f9f9f9; transition: all 0.3s; display: inline-block;
     }
     .verify-link:hover { background: #e0e0e0; color: #000; border-color: #999; }
-    .cert-url-text {
-      font-size: 11px;
-      color: #555;
-      margin-top: 6px;
-      word-break: break-all;
-    }
-    #token-id {
-      font-family: monospace;
-      letter-spacing: 0.5px;
-      color: #2563eb;
-    }
-    /* Right Side Footer */
-    .footer-right {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .signature-img {
-      height: 60px;
-      margin-bottom: 5px;
-      display: block;
-    }
-    .issuer-line {
-      width: 200px;
-      border-top: 1px solid #333;
-      margin-bottom: 5px;
-    }
+    .cert-url-text { font-size: 11px; color: #555; margin-top: 6px; word-break: break-all; }
+    #token-id { font-family: monospace; letter-spacing: 0.5px; color: #2563eb; }
+
+    .footer-right { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .signature-img { height: 60px; margin-bottom: 5px; display: block; }
+    .issuer-line { width: 200px; border-top: 1px solid #333; margin-bottom: 5px; }
     .issuer-name { font-weight: bold; font-size: 18px; }
-    .issuer-title { font-size: 14px; color: #555; }
-    /* Status Badge */
+    .issuer-title { font-size: 14px; color: #4f6072; }
+
     #status-badge {
       position: absolute;
       top: 20px; right: 20px;
@@ -164,28 +150,39 @@
       font-weight: bold;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
+    
+    @media print {
+      body { background: white !important; padding: 0 !important; }
+      #cert-container { box-shadow: none !important; margin: 0 !important; }
+      iframe { display: none !important; }
+    }
+    
   </style>
 </head>
 <body>
 <div id="cert-container">
   <div id="status-badge">Connecting to Blockchain...</div>
-  <div id="logo"><img src="./images/logo.webp"></div>
+  <div id="logo"><img src="./images/logo.webp" alt="Logo"></div>
+
   <div class="content">
-    <!-- Header -->
     <div class="header-text">Certificate of Participation</div>
     <div class="sub-header">This certifies that</div>
-    <!-- Name -->
+
     <div class="receiver-name" id="name">Loading...</div>
-    <!-- Context -->
-    <div class="context-text">
-      has participated in <span class="bold" id="talk">...</span><br>
+
+    <div class="participated-line">has participated in</div>
+    <div class="talk-title" id="talk">...</div>
+
+    <div class="organized-by">
       organized by <span class="bold" id="org">...</span> on <span class="bold" id="date">...</span>
     </div>
-    <!-- Footer -->
+
+    <!-- Remarks from blockchain -->
+    <div class="remarks" id="remarks"></div>
+
     <div class="footer">
-      <!-- Left: Verification -->
       <div class="footer-left">
-        <div class="verify-title">Verify this certificate on blockchain</div>
+        <div class="verify-title">Verify on blockchain</div>
         <a href="#" id="verify-url" target="_blank" class="verify-link">
           Contract ID: <span id="token-id">...</span> ↗
         </a>
@@ -193,9 +190,7 @@
           View digital certificate: <br><span id="current-url">https://...</span>
         </div>
       </div>
-      <!-- Right: Signature & Issuer -->
       <div class="footer-right">
-        <!-- Signature Image loaded from chain -->
         <img id="sig-img" src="" alt="Signature" class="signature-img" style="display:none;">
         <div class="issuer-line"></div>
         <div class="issuer-name" id="issuer">...</div>
@@ -204,11 +199,12 @@
     </div>
   </div>
 </div>
+
 <script>
-  // --- CONFIGURATION ---
   const CONTRACT_ADDRESS = "0x03BFbC34B031B3275f87b91b472AdcDA366587ac";
   const RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
   const EXPLORER = "https://eth-sepolia.blockscout.com";
+
   const abi = [
     {
       "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
@@ -233,48 +229,66 @@
       "type": "function"
     }
   ];
+
   const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
   const params = new URLSearchParams(location.search);
   const tokenID = params.get('tokenID');
   const urlName = params.get('name')?.trim().toLowerCase();
+
   if (!tokenID || !urlName) {
     document.body.innerHTML = "<h2 style='text-align:center;margin-top:100px;color:#b91c1c;'>Invalid or incomplete certificate link</h2>";
     throw "Missing parameters";
   }
+
   async function loadCertificate() {
     const badge = document.getElementById('status-badge');
     badge.textContent = "Verifying link...";
     badge.style.background = "#ca8a04";
+
     try {
       const data = await contract.callStatic.getData(tokenID);
-      // Empty/invalid token handling
+
       if (!data.receiverName || data.receiverName.trim() === "") {
         throw new Error("Token does not exist");
       }
-      // ←←← STRICT NAME MATCH (case-insensitive + whitespace tolerant)
+
       const cleanUrlName = urlName.trim().toLowerCase();
       const cleanChainName = data.receiverName.trim().toLowerCase();
       if (cleanUrlName !== cleanChainName && cleanUrlName !== cleanChainName.replace(/\s+/g,'')) {
         throw new Error("Name in URL does not match certificate holder");
       }
+
+      // Populate fields
       document.getElementById('name').textContent = data.receiverName;
       document.getElementById('talk').textContent = data.talkTitle;
       document.getElementById('org').textContent = data.organizationName;
       document.getElementById('date').textContent = data.eventDate;
       document.getElementById('issuer').textContent = data.issuerName;
       document.getElementById('issuer-title').textContent = data.issuerTitle;
+
+      // Signature
       const sigImg = document.getElementById('sig-img');
       if (data.signatureUrl && data.signatureUrl.startsWith('http')) {
         sigImg.src = data.signatureUrl;
         sigImg.style.display = 'block';
       }
+
+      // Remarks
+      const remarksEl = document.getElementById('remarks');
+      if (data.remarks && data.remarks.trim() !== "") {
+        remarksEl.textContent = data.remarks.trim();
+        remarksEl.style.display = 'none';
+      }
+
+      // Verification link
       const verifyUrl = `${EXPLORER}/token/${CONTRACT_ADDRESS}/instance/${tokenID}`;
       document.getElementById('verify-url').href = verifyUrl;
       document.getElementById('token-id').textContent = tokenID;
-      badge.textContent = "✓ Authenticated on Blockchain";
-      badge.style.background = "#15803d";
       document.getElementById("current-url").textContent = window.location.href;
+
+      badge.textContent = "Authenticated on Blockchain";
+      badge.style.background = "#15803d";
     } catch (error) {
       console.error(error);
       badge.textContent = "Invalid Certificate Link";
@@ -292,7 +306,8 @@
       document.getElementById("current-url").textContent = "—";
     }
   }
+
   loadCertificate();
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a3fd9972a2a04e8',t:'MTc2NDA2MDExNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
